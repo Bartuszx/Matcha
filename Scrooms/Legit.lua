@@ -5,6 +5,8 @@ local SMOOTH = 0.5
 local STALE = 0.1
 local MIN_SWITCH = 0.05
 
+local rotationoffset = 0xd0
+
 local mouseDown, owner = false, nil
 local lastSwitch, lastResync = 0, 0
 
@@ -64,8 +66,8 @@ task.spawn(function()
 			letGo()
 
 			pcall(function()
-				local white = memory_read("float", gui.Ring.Tick.Address + 0xd8)
-				local green = memory_read("float", gui.Ring.BullseyeColor.Address + 0xd8)
+				local white = memory_read("float", gui.Ring.Tick.Address + rotationoffset)
+				local green = memory_read("float", gui.Ring.BullseyeColor.Address + rotationoffset)
 				local diff = angleDiff(white, green)
 
 				if math.abs(diff) < 5 and not ringClicked then
