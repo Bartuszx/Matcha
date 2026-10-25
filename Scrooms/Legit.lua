@@ -5,7 +5,32 @@ local SMOOTH = 0.5
 local STALE = 0.1
 local MIN_SWITCH = 0.05
 
-local rotationoffset = 0xd0
+local function getExternalOffsets()
+    local ok, result = pcall(function()
+        local res = game:HttpGet("https://offsets.femboythighs.org/offsets.json")
+        if not res or res == "" then return {} end
+        local decoded = game:GetService("HttpService"):JSONDecode(res)
+        return decoded and decoded.Offsets or {}
+    end)
+    return ok and result or {}
+end
+
+local function getOffset(offsets, namespace, name)
+    local ns = offsets[namespace]
+    local value = ns and ns[name]
+    if type(value) == "string" then
+        return tonumber(value)
+    end
+    return value
+end
+
+local offsets = getExternalOffsets()
+local rotationoffset = getOffset(offsets, "GuiObject", "Rotation")
+
+if not rotationoffset then
+    warn("Rotation offset not found online, using fallback")
+    rotationoffset = FALLBACK_ROTATION
+end
 
 local mouseDown, owner = false, nil
 local lastSwitch, lastResync = 0, 0
